@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+    environment:
+      DB_USERNAME: admin
+      DB_PASSWORD: admin12345
+      DB_DATABASE: demo
+      DB_HOST: db
+      DB_PORT: 5432
+    networks:
+      - app-network
+
+  db:
+    image: bitnami/postgresql:14
+    environment:
+      POSTGRESQL_USERNAME: admin
+      POSTGRESQL_PASSWORD: admin12345
+      POSTGRESQL_DATABASE: demo
+    volumes:
+      - db-data:/bitnami/postgresql
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db-data:
